@@ -4,6 +4,7 @@
   "description": "a buy and sell website for college students",
   "main": "app.js",
   "scripts": {
+    "start":"node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cezain Majeed",

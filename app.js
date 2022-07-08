@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
   googleId: String,
 });
 
-const emailSchema=new mongoose.Schema({
+const emailSchema = new mongoose.Schema({
   email_Id: String,
   admin: Boolean
 });
@@ -64,7 +64,7 @@ userSchema.plugin(findOrCreate);
 
 const User = new mongoose.model("User", userSchema);
 const Product = new mongoose.model("Product", productSchema);
-const EmailList =new mongoose.model("EmailList", emailSchema);
+const EmailList = new mongoose.model("EmailList", emailSchema);
 
 
 
@@ -112,11 +112,11 @@ app.get("/auth/google/home",
     // Successful authentication, redirect home.
     res.redirect('/home');
   });
-const a=[]
-app.get("/manage",function(req,res){
+const a = []
+app.get("/manage", function (req, res) {
   if (req.isAuthenticated()) {
-    EmailList.find({},function(err,email_list){
-      res.render("manage",{ user: req.user, EmailList:email_list});
+    EmailList.find({}, function (err, email_list) {
+      res.render("manage", { user: req.user, EmailList: email_list });
     });
   } else {
     res.redirect("/login");
@@ -129,7 +129,7 @@ app.get("/login", function (req, res) {
 app.get("/signup", function (req, res) {
   res.render("signup");
 });
- 
+
 app.get("/", function (req, res) {
   if (req.isAuthenticated()) {
     res.redirect("/home");
@@ -140,11 +140,11 @@ app.get("/", function (req, res) {
 
 app.get("/home", function (req, res) {
   if (req.isAuthenticated()) {
-    EmailList.findOne({email:req.user.email}, function (err, list) {
+    EmailList.findOne({ email: req.user.email }, function (err, list) {
       if (err)
         console.log(err);
       else {
-        res.render("home", { user: req.user, emailList:list });
+        res.render("home", { user: req.user, emailList: list });
       }
     });
     // const mail=emailList.findOne({email:user.email})
@@ -195,16 +195,16 @@ app.get("/profile", function (req, res) {
 
 app.get("/donate", function (req, res) {
   if (req.isAuthenticated()) {
-    Product.find({price:{$lt:1}}, function(err, foundProducts) {
+    Product.find({ price: { $lt: 1 } }, function (err, foundProducts) {
       if (err)
         console.log(err);
       else {
         res.render("donate", { user: req.user, product: foundProducts });
       }
     });
-} else {
-  res.redirect("/login");
-}
+  } else {
+    res.redirect("/login");
+  }
 });
 //items with given category are shown to the user
 app.get("/category/:type", function (req, res) {
@@ -215,7 +215,7 @@ app.get("/category/:type", function (req, res) {
         if (err)
           console.log(err); // if any error the error message is shown
         else { //if no error then all items are shown
-          res.render("category", { user: req.user, product: foundProducts }); 
+          res.render("category", { user: req.user, product: foundProducts });
         }
       });
     }
@@ -282,23 +282,35 @@ app.get("/logout", function (req, res) {
 
 app.post("/signup", function (req, res) {
   //gets name, email and password from user and checks this user already present or not
-  User.register({ username: req.body.username, name: req.body.fullname }, req.body.password, function (err, user) {
-    if (err) {
-      console.log(err);
-      res.redirect("/login");
-    } else { // if the user not present then new user is created and authenticated
-      passport.authenticate("local")(req, res, function () {
-        const userEmail = req.user.username;
-        User.findOneAndUpdate({ _id: req.user._id }, { $set: { email: userEmail } }, { upsert: true }, function (err, doc) {
-          if (err)
-            console.log(err);
-          else
-            console.log("updated");
-        });
-        res.redirect("/home"); //after authentication its redirected to home page
-      });
+  EmailList.exists({ email_Id: req.body.username }, function (err, doc) {
+    {
+      if (!err) {
+        if (doc) {
+          User.register({ username: req.body.username, name: req.body.fullname }, req.body.password, function (err, user) {
+            if (err) {
+              console.log(err);
+              res.redirect("/login");
+            } else { // if the user not present then new user is created and authenticated
+              passport.authenticate("local")(req, res, function () {
+                const userEmail = req.user.username;
+                User.findOneAndUpdate({ _id: req.user._id }, { $set: { email: userEmail } }, { upsert: true }, function (err, doc) {
+                  if (err)
+                    console.log(err);
+                  else
+                    console.log("updated");
+                });
+                res.redirect("/home"); //after authentication its redirected to home page
+              });
+            }
+          });
+        }
+        else{
+          res.redirect("signup");
+        }
+      }
     }
   });
+
 });
 
 
@@ -309,7 +321,7 @@ app.post("/login", function (req, res) {
     username: req.body.username,
     password: req.body.password
   });
-  
+
   req.login(user, function (err) {
     if (err) // if any wrong email or password then the relavent error message is shown 
       console.log(err);
@@ -321,25 +333,25 @@ app.post("/login", function (req, res) {
   });
 });
 
-app.post("/add_email",function(req,res){
-  EmailList.exists({email_Id:req.body.username_1},function(err,doc){
-    if(!err){
-      if(!doc){
-        let emailLists=new EmailList({
-          email_Id:req.body.username_1,
-          admin:false
-        }); 
+app.post("/add_email", function (req, res) {
+  EmailList.exists({ email_Id: req.body.username_1 }, function (err, doc) {
+    if (!err) {
+      if (!doc) {
+        let emailLists = new EmailList({
+          email_Id: req.body.username_1,
+          admin: false
+        });
         emailLists.save();
       }
     }
   });
   res.redirect("/manage");
 });
-app.post("/delete_email",function(req,res){
-  EmailList.exists({email_Id:req.body.username_3},function(err,doc){
-    if(!err){
-      if(doc){
-        EmailList.findOneAndDelete({email_Id:req.body.username_3},function(err,doc){
+app.post("/delete_email", function (req, res) {
+  EmailList.exists({ email_Id: req.body.username_3 }, function (err, doc) {
+    if (!err) {
+      if (doc) {
+        EmailList.findOneAndDelete({ email_Id: req.body.username_3 }, function (err, doc) {
 
         });
       }
@@ -347,18 +359,18 @@ app.post("/delete_email",function(req,res){
   });
   res.redirect("/manage");
 })
-app.post("/add_admin",function(req,res){
-  EmailList.exists({email_Id:req.body.username_2},function(err,doc){
-    if(!err){
-      if(!doc){
-        let emailLists=new EmailList({
-          email_Id:req.body.username_2,
-          admin:true
-        }); 
+app.post("/add_admin", function (req, res) {
+  EmailList.exists({ email_Id: req.body.username_2 }, function (err, doc) {
+    if (!err) {
+      if (!doc) {
+        let emailLists = new EmailList({
+          email_Id: req.body.username_2,
+          admin: true
+        });
         emailLists.save();
       }
-      else{
-        EmailList.findOneAndUpdate({email_Id:req.body.username_2},{admin:true},{new:true},function(err,doc){
+      else {
+        EmailList.findOneAndUpdate({ email_Id: req.body.username_2 }, { admin: true }, { new: true }, function (err, doc) {
           //
         });
       }
@@ -367,11 +379,11 @@ app.post("/add_admin",function(req,res){
   res.redirect("/manage");
 });
 
-app.post("/delete_admin",function(req,res){
-  EmailList.exists({email_Id:req.body.username_4},function(err,doc){
-    if(!err){
-      if(doc){
-        EmailList.findOneAndUpdate({email_Id:req.body.username_4},{admin:false},{new:true},function(err,doc){
+app.post("/delete_admin", function (req, res) {
+  EmailList.exists({ email_Id: req.body.username_4 }, function (err, doc) {
+    if (!err) {
+      if (doc) {
+        EmailList.findOneAndUpdate({ email_Id: req.body.username_4 }, { admin: false }, { new: true }, function (err, doc) {
 
         });
       }

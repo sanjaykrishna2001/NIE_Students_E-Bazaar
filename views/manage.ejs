@@ -1,0 +1,78 @@
+<%-include("partials/header")%>
+
+<div class="dark-overlay">
+    <main class="form-signin">
+      <form action="/add_email" method="post">
+
+        <h1 class="h3 mb-3 fw-normal">Add email</h1>
+    
+        <div class="form-floating">
+          <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_1" required>
+          <label for="floatingInput">Email address</label>
+        </div>
+        <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+      </form>
+    </main>
+</div>
+
+<h1 class="h3 mb-3 fw-normal">All emails</h1>
+<%for(let i=EmailList.length-1;i>=0;i--) {%>
+  <ul>
+    <li><%=EmailList[i].email_Id%> 
+    </li>
+  </ul>
+<% } %>   
+
+<div class="dark-overlay">
+  <main class="form-signin">
+    <form action="/delete_email" method="post">
+
+      <h1 class="h3 mb-3 fw-normal">delete a email</h1>
+  
+      <div class="form-floating">
+        <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_3" required>
+        <label for="floatingInput">Email address</label>
+      </div>
+      <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+    </form>
+  </main>
+</div>
+
+
+<div class="dark-overlay">
+    <main class="form-signin">
+      <form action="/add_admin" method="post">
+        <h1 class="h3 mb-3 fw-normal">Add a admin</h1>
+    
+        <div class="form-floating">
+          
+          <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_2" required>
+          <label for="floatingInput">Email address</label>
+        </div>
+        <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+      </form>
+    </main> 
+</div>
+<h1 class="h3 mb-3 fw-normal">All admins</h1>
+<%for(let i=EmailList.length-1;i>=0;i--) {%>
+  <ul>
+    <% if(EmailList[i].admin){ %> 
+    <li><%=EmailList[i].email_Id%> </li>
+    <% }%>  
+  </ul>
+<% }%>   
+<div class="dark-overlay">
+  <main class="form-signin">
+    <form action="/delete_admin" method="post">
+      <h1 class="h3 mb-3 fw-normal">Delete admin</h1>
+  
+      <div class="form-floating">
+        
+        <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_4" required>
+        <label for="floatingInput">Email address</label>
+      </div>
+      <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+    </form>
+  </main> 
+</div>
+<%-include("partials/footer")%>

@@ -43,7 +43,12 @@ const productSchema = new mongoose.Schema({
   seller: [mongoose.Schema.Types.ObjectId],
   sellerName: String,
   image: String,
-  cloudinary_id: String
+  cloudinary_id: String,
+  sold:{
+    type:Boolean,
+    default:false,
+    require:true
+  }
 });
 
 const userSchema = new mongoose.Schema({
@@ -127,7 +132,7 @@ app.get("/login", function (req, res) {
 });
 
 app.get("/signup", function (req, res) {
-  res.render("signup");
+  res.render("signup",{msg:''});
 });
 
 app.get("/", function (req, res) {
@@ -140,13 +145,24 @@ app.get("/", function (req, res) {
 
 app.get("/home", function (req, res) {
   if (req.isAuthenticated()) {
-    EmailList.findOne({ email: req.user.email }, function (err, list) {
-      if (err)
-        console.log(err);
-      else {
-        res.render("home", { user: req.user, emailList: list });
+    EmailList.exists({ email_Id: req.user.email }, function (err, doc) {
+     if(!err){
+      if(doc){
+        EmailList.findOne({ email_Id: req.user.email }, function (err, doc) {
+          if (err)
+            console.log(err);
+          else {
+            res.render("home", { user: req.user, mail: doc});
+          }
+        });
       }
-    });
+      else{
+        req.logout();
+        res.render("signup",{msg:"email dosent belong too NIE,pllese contact admin abc@gmail.com"});
+      }
+     }
+    });  
+    
     // const mail=emailList.findOne({email:user.email})
     // res.render("home", { user: req.user, });
   } else {
@@ -181,7 +197,7 @@ app.get("/add", function (req, res) {
 
 app.get("/profile", function (req, res) {
   if (req.isAuthenticated()) {
-    Product.find({ seller: req.user._id }, function (err, foundProducts) {
+    Product.find({ seller: req.user._id ,sold:false}, function (err, foundProducts) {
       if (err)
         console.log(err);
       else {
@@ -193,9 +209,23 @@ app.get("/profile", function (req, res) {
   }
 });
 
+app.get("/sold", function (req, res) {
+  if (req.isAuthenticated()) {
+    Product.find({ sold:true}, function (err, foundProducts) {
+      if (err)
+        console.log(err);
+      else {
+        res.render("donate", { user: req.user, product: foundProducts });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.get("/donate", function (req, res) {
   if (req.isAuthenticated()) {
-    Product.find({ price: { $lt: 1 } }, function (err, foundProducts) {
+    Product.find({ price: { $lt: 1 } ,sold:false}, function (err, foundProducts) {
       if (err)
         console.log(err);
       else {
@@ -211,7 +241,7 @@ app.get("/category/:type", function (req, res) {
   if (req.isAuthenticated()) { //checks for for user authentication
     const type = req.params.type;
     if (type === "All") { // if the type is All then all item are shown
-      Product.find({}, function (err, foundProducts) {
+      Product.find({sold:false}, function (err, foundProducts) {
         if (err)
           console.log(err); // if any error the error message is shown
         else { //if no error then all items are shown
@@ -220,7 +250,7 @@ app.get("/category/:type", function (req, res) {
       });
     }
     else { //if type is not ALL then the particular items with that type are shown
-      Product.find({ type: type }, function (err, foundProducts) {
+      Product.find({ type: type,sold:false }, function (err, foundProducts) {
         if (err)
           console.log(err);
         else {
@@ -241,7 +271,7 @@ app.get("/seller/:sellerId", function (req, res) {
       if (err)
         console.log(err);
       else {
-        Product.find({ seller: foundUser._id }, function (err, foundProducts) {
+        Product.find({ seller: foundUser._id,sold:false }, function (err, foundProducts) {
           if (err)
             console.log(err);
           else {
@@ -255,16 +285,15 @@ app.get("/seller/:sellerId", function (req, res) {
   }
 });
 
-app.get("/delete/:productId", async function (req, res) {
-  try {
-    const foundproduct = await Product.findById(req.params.productId);
-    await cloudinary.uploader.destroy(foundproduct.cloudinary_id);
+app.get("/delete/:productId", function (req, res) {
+  Product.findOneAndUpdate({_id:req.params.productId}, { sold: true }, { new: true },function(err,doc){
+    if(!err){
+      if(doc){
 
-    await foundproduct.remove();
-    res.redirect("/profile");
-  } catch (err) {
-    console.log(err);
-  }
+      }
+    }
+  });
+  res.redirect("/profile");
 });
 
 app.get("/edit", function (req, res) {
@@ -305,7 +334,7 @@ app.post("/signup", function (req, res) {
           });
         }
         else{
-          res.redirect("signup");
+          res.render("signup",{msg:"email dosent belong too NIE,pllese contact admin abc@gmail.com"});
         }
       }
     }

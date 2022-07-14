@@ -1,9 +1,9 @@
-<%-include("partials/header")%>
+<%-include("partials/header",{type:"All"})%>
 
 <div class="container py-5 px-5">
   <form action="/add" method="post" enctype="multipart/form-data">
     <div class="mb-3">
-      <label for="image" class="form-label" >Upload image (File type should be jpg,jpeg or png)</label>
+      <label for="image" class="form-label" >Upload image (File type should be jpg, jpeg or png)</label>
       <input type="file" class="form-control" id="image" required name="image" >
     </div>
     <div class="mb-3">
@@ -11,7 +11,24 @@
       <input type="text" class="form-control" id="name" required name="name">
     </div>
     <div class="mb-3">
-      <label for="price" class="form-label">Price(in Rs.)</label>
+        <label for="donate" class="form-label">Click to donate this item</label>
+        <input type="checkbox" id="donate" value="0" onclick="donateit()">
+      </div>
+      <script>
+        function donateit() {
+          var checkBox = document.getElementById("donate");
+          var text = document.getElementById("pri");
+          var text2 = document.getElementById("price");
+          if (checkBox.checked == true) {
+            text.style.display = "none";
+            text2.value=0;
+          } else {
+            text.style.display = "block";
+          }
+        }
+      </script>
+    <div class="mb-3" id="pri">
+      <label for="price" class="form-label">Price(in ₹)</label>
       <input type="text" class="form-control" id="price" required name="price">
     </div>
     <div class="mb-3">
@@ -54,4 +71,4 @@
 </div>
 
 
-<%-include("partials/footer")%>
+<%-include("partials/footer")%> 

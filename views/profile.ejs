@@ -1,4 +1,4 @@
-<%-include("partials/header")%>
+<%-include("partials/header",{type:"All"})%>
 
 <div class="container py-4 px-5">
   <table class="table">
@@ -12,7 +12,7 @@
       <td><%=user.email%></td>
     </tr>
     <tr>
-      <td>Contact no</td>
+      <td>Contact no.</td>
       <td><%=user.contact%></td>
     </tr>
   </tbody>
@@ -23,7 +23,7 @@
 </div>
 
 <div class="container px-5">
-  <p class="lead">Your posts:-</p>
+  <p class="lead">Added items:</p>
 </div>
 
 <%for(let i=0;i<product.length;i++) {%>
@@ -40,7 +40,7 @@
         <td style="width: 50%"><%=product[i].name%></td>
       </tr>
       <tr>
-        <td>Price</td>
+        <td>Price (in ₹)</td>
         <td><%=product[i].price%></td>
       </tr>
       <tr>
@@ -61,7 +61,14 @@
        </tr>
      </tbody>
    </table>
-   <a href="/delete/<%=product[i]._id%>"><button type="button" class="btn btn-danger me-2">Mark as sold</button></a>
+   <a href="/delete/<%=product[i]._id%>"><button type="button" class="btn btn-danger me-2">
+    <% if(product[i].sold){ %> 
+      Delete
+    <% } %> 
+    <% if(!product[i].sold){ %> 
+       Mark as sold
+    <% } %> 
+    </button></a>
    </div>
 <%}%>
 

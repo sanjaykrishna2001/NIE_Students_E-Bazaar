@@ -1,5 +1,6 @@
-<%-include("partials/header")%>
-
+<%-include("partials/header",{type:"All"})%>
+<br>
+<div class="container">
 <div class="dark-overlay">
     <main class="form-signin">
       <form action="/add_email" method="post">
@@ -10,7 +11,7 @@
           <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_1" required>
           <label for="floatingInput">Email address</label>
         </div>
-        <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+        <button class="w-50 btn btn-lg btn-success" type="submit">Submit</button>
       </form>
     </main>
 </div>
@@ -27,32 +28,34 @@
   <main class="form-signin">
     <form action="/delete_email" method="post">
 
-      <h1 class="h3 mb-3 fw-normal">delete a email</h1>
+      <h1 class="h3 mb-3 fw-normal">Delete email</h1>
   
       <div class="form-floating">
         <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_3" required>
         <label for="floatingInput">Email address</label>
       </div>
-      <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+      <button class="w-50 btn btn-lg btn-success" type="submit">Submit</button>
     </form>
   </main>
 </div>
-
+<br>
 
 <div class="dark-overlay">
     <main class="form-signin">
       <form action="/add_admin" method="post">
-        <h1 class="h3 mb-3 fw-normal">Add a admin</h1>
+        <h1 class="h3 mb-3 fw-normal">Add admin</h1>
     
         <div class="form-floating">
           
           <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_2" required>
           <label for="floatingInput">Email address</label>
         </div>
-        <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+        <button class="w-50 btn btn-lg btn-success" type="submit">Submit</button>
       </form>
     </main> 
 </div>
+<br>
+
 <h1 class="h3 mb-3 fw-normal">All admins</h1>
 <%for(let i=EmailList.length-1;i>=0;i--) {%>
   <ul>
@@ -71,8 +74,10 @@
         <input type="email" class="w-50 form-control" id="floatingInput" placeholder="name@example.com" name="username_4" required>
         <label for="floatingInput">Email address</label>
       </div>
-      <button class="w-50 btn btn-lg btn-success" type="submit">submit</button>
+      <button class="w-50 btn btn-lg btn-success" type="submit">Submit</button>
     </form>
   </main> 
 </div>
+</div>
+<br>
 <%-include("partials/footer")%>

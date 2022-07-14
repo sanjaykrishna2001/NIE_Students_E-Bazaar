@@ -1,4 +1,4 @@
-<%-include("partials/header")%>
+<%-include("partials/header",{type:"All"})%>
 
 <div class="container py-5 px-5">
   <form action="/edit" method="post">
@@ -11,7 +11,7 @@
       <input type="text" class="form-control" id="price" required name="email" value="<%=user.email%>">
     </div>
     <div class="mb-3">
-      <label for="price" class="form-label">Contact no</label>
+      <label for="price" class="form-label">Contact no.</label>
       <input type="text" class="form-control" id="price" required name="contact" value="<%=user.contact%>">
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>

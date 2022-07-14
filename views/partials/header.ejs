@@ -12,26 +12,45 @@
   </head>
   <body>
 
-
     <header class="p-3  border-bottom">
+
         <div class="container">
           <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
-              <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><img src="/images/newlogo.png"  width="75" height="80"/></svg>
-            </a>
+              <svg class="bi me-2" width="250" height="32" role="img" aria-label="Bootstrap"><img src="/images/newlogo.png"  width="120" height="125"></svg>
+              <!-- <h1 class="display-5" style="text-align:center;"><b>NIE STUDENT'S E-BAZAAR</b>   </h1> -->
 
+            </a>
+            <h1 class="display-5" style="text-align:center;"><b>NIE STUDENT'S E-BAZAAR</b>   </h1>
+
+          </div>
+          
+        </div>
+        <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
               <!-- <li><a href="/" class="nav-link px-4 link-dark">Home</a></li> -->
               <li><a href="/"><button type="button" class="btn btn-warning me-2">Home</button></a></li>
               <!-- <li><a href="/working" class="nav-link px-4 link-dark">How it works?</a></li> -->
               <li><a href="/working"><button type="button" class="btn btn-info me-2">How it works?</button></a></li>
               <li><a href="/about"><button type="button" class="btn btn-info me-2">About Us</button></a></li>
-              <li><a href="/donate"><button type="button" class="btn btn-info me-2">donated items</button></a></li>
-
+              <li><a href="/donate"><button type="button" class="btn btn-info me-2">Donated items</button></a></li>
+              <li>
+              <form action="/category/<%=type%>" method="GET" class="form-inline" style="display:inline-flex">
+                
+                <input type="text" placeholder="Search Items" name="search" class="form-control">
+                &nbsp;
+                <input type="submit" value="Search" class="btn btn-success">
+            </form>
+            </li>
+               
             </ul>
-<!-- 
-             -->
-            <a href="/add"><button type="button" class="btn btn-danger me-2">Add products</button></a>
+
+
+              
+            
+
+            <a href="/add"><button type="button" class="btn btn-danger me-2">Add items</button></a>
 
 
             <div class="dropdown text-end">
@@ -46,14 +65,17 @@
             </div>
           </div>
         </div>
+        <!-- <div>
+          <h1 class="display-5" style="text-align:center;"><b>NIE STUDENT'S E-BAZAAR</b>   </h1>
+        </div> -->
       </header>
 
-
+      <!-- <h2>NIE STUDENT'S E-BAZAAR</h2> -->
 
     	<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #62afe6;">
     		<div class="container px-5">
     			<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="/category/All" class="nav-link px-3 link-dark">All products</a></li>
+            <li><a href="/category/All" class="nav-link px-3 link-dark">All items</a></li>
     				<li><a href="/category/Books" class="nav-link px-3 link-dark">Books and Novels</a></li>
     				<li><a href="/category/Stationery" class="nav-link px-3 link-dark">Stationery</a></li>
     				<li><a href="/category/Electronics" class="nav-link px-3 link-dark">Electronics and Appliances</a></li>

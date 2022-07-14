@@ -1,4 +1,4 @@
-<%-include("partials/header")%>
+<%-include("partials/header",{type:"All"})%>
 
 <div class="container py-4 px-5">
   <table class="table">
@@ -12,7 +12,7 @@
       <td><%=seller.email%></td>
     </tr>
     <tr>
-      <td>Contact no</td>
+      <td>Contact no.</td>
       <td><%=seller.contact%></td>
     </tr>
   </tbody>
@@ -20,7 +20,7 @@
 </div>
 
 <div class="container px-5">
-  <p class="lead">Other products by this seller :-</p>
+  <p class="lead">Other items by the seller :</p>
 </div>
 
 <%for(let i=0;i<product.length;i++) {%>
@@ -37,7 +37,7 @@
         <td style="width: 50%"><%=product[i].name%></td>
       </tr>
       <tr>
-        <td>Price</td>
+        <td>Price (in ₹)</td>
         <td><%=product[i].price%></td>
       </tr>
       <tr>

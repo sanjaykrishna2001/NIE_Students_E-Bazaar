@@ -10,6 +10,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 const cloudinary = require("./utils/cloudinary");
 const upload = require("./utils/multer");
+const e = require('express');
 
 const app = express();
 
@@ -143,6 +144,10 @@ app.get("/", function (req, res) {
   }
 });
 
+// function timeout(res) {
+//   res.redirect("/signup");
+// }
+
 app.get("/home", function (req, res) {
   if (req.isAuthenticated()) {
     EmailList.exists({ email_Id: req.user.email }, function (err, doc) {
@@ -158,10 +163,12 @@ app.get("/home", function (req, res) {
       }
       else{
         req.logout();
-        res.render("signup",{msg:"email dosent belong too NIE,pllese contact admin abc@gmail.com"});
+        res.render("signup",{msg:"Email doesn't belong to NIE,Please contact admin dilipsingh@gmail.com"});
+
       }
      }
     });  
+
     
     // const mail=emailList.findOne({email:user.email})
     // res.render("home", { user: req.user, });
@@ -197,7 +204,7 @@ app.get("/add", function (req, res) {
 
 app.get("/profile", function (req, res) {
   if (req.isAuthenticated()) {
-    Product.find({ seller: req.user._id ,sold:false}, function (err, foundProducts) {
+    Product.find({ seller: req.user._id }, function (err, foundProducts) {
       if (err)
         console.log(err);
       else {
@@ -215,7 +222,7 @@ app.get("/sold", function (req, res) {
       if (err)
         console.log(err);
       else {
-        res.render("donate", { user: req.user, product: foundProducts });
+        res.render("sold", { user: req.user, product: foundProducts });
       }
     });
   } else {
@@ -236,32 +243,78 @@ app.get("/donate", function (req, res) {
     res.redirect("/login");
   }
 });
-//items with given category are shown to the user
-app.get("/category/:type", function (req, res) {
-  if (req.isAuthenticated()) { //checks for for user authentication
-    const type = req.params.type;
-    if (type === "All") { // if the type is All then all item are shown
-      Product.find({sold:false}, function (err, foundProducts) {
+
+// fuzzy search reg expression return function
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
+
+app.get("/category/:type",function(req,res){
+  if(req.isAuthenticated()){
+    const type= req.params.type;
+    if(req.query.search) {
+    const search=req.query.search;
+    const regex = new RegExp(escapeRegex(req.query.search),'gi');
+    if (type === "All") { 
+      Product.find({sold:false,name: regex}, function (err, foundProducts) {
         if (err)
-          console.log(err); // if any error the error message is shown
-        else { //if no error then all items are shown
-          res.render("category", { user: req.user, product: foundProducts });
+          console.log(err); 
+        else { 
+          
+          res.render("category", { user: req.user, product: foundProducts ,type});
         }
       });
     }
-    else { //if type is not ALL then the particular items with that type are shown
-      Product.find({ type: type,sold:false }, function (err, foundProducts) {
+    else { 
+      Product.find({ type: type,sold:false,name: regex }, function (err, foundProducts) {
         if (err)
           console.log(err);
         else {
-          res.render("category", { user: req.user, product: foundProducts });
+          res.render("category", { user: req.user, product: foundProducts, type});
         }
       });
     }
-  } else {
-    res.redirect("/login");// if user not authenticated then its redirected to login page
+    }
+    else{
+      if (type === "All") { // if the type is All then all item are shown
+        Product.find({sold:false}, function (err, foundProducts) {
+          if (err)
+            console.log(err); // if any error the error message is shown
+          else { //if no error then all items are shown
+            res.render("category", { user: req.user, product: foundProducts ,type});
+          }
+        });
+      }
+      else { //if type is not ALL then the particular items with that type are shown
+        Product.find({ type: type,sold:false }, function (err, foundProducts) {
+          if (err)
+            console.log(err);
+          else {
+            res.render("category", { user: req.user, product: foundProducts ,type});
+          }
+        });
+      }
+    }
+  }
+  else{
+    res.redirect("/login");
   }
 });
+
+
+
+
+
+// //items with given category are shown to the user
+// app.get("/category/:type", function (req, res) {
+//   if (req.isAuthenticated()) { //checks for for user authentication
+//     const type = req.params.type;
+    
+//   } else {
+//     res.redirect("/login");// if user not authenticated then its redirected to login page
+//   }
+// });
 
 app.get("/seller/:sellerId", function (req, res) {
   if (req.isAuthenticated()) {
@@ -286,13 +339,41 @@ app.get("/seller/:sellerId", function (req, res) {
 });
 
 app.get("/delete/:productId", function (req, res) {
-  Product.findOneAndUpdate({_id:req.params.productId}, { sold: true }, { new: true },function(err,doc){
-    if(!err){
-      if(doc){
+  Product.findOne({ _id: req.params.productId }, function (err, doc1) {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      if (doc1) {
+        if (doc1.sold === false) {
+          Product.findOneAndUpdate({ _id: req.params.productId }, { sold: true }, { new: true }, function (err, doc) {
+            if(err){
+              console.log(err);
+            }
+            else{
+              if (doc) {
 
+              }
+            }
+          });
+        }
+        else {
+          Product.findOneAndDelete({ _id: req.params.productId }, function (err, doc) {
+            if(err){
+              console.log(err);
+            }
+            else{
+              if (doc) {
+
+              }
+            }
+          });
+        }
       }
     }
+
   });
+
   res.redirect("/profile");
 });
 
@@ -334,7 +415,7 @@ app.post("/signup", function (req, res) {
           });
         }
         else{
-          res.render("signup",{msg:"email dosent belong too NIE,pllese contact admin abc@gmail.com"});
+          res.render("signup",{msg:"Email doesn't belong to NIE, Please contact admin dilipsingh@gmail.com"});
         }
       }
     }

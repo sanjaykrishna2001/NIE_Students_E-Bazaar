@@ -12,7 +12,7 @@ const cloudinary = require("./utils/cloudinary");
 const upload = require("./utils/multer");
 const e = require('express');
 
-const app = express();
+const app = express(); 
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
